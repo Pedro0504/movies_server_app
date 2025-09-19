@@ -5,15 +5,15 @@ const cors = require('cors')
 const multer = require('multer')
 const mongoose = require('mongoose')
 
-//routes
-require ("./routes/auth.routes");
-require ("./routes/user.routes");
+
 //Port
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
 const cookieSession = require('cookie-session');
-
+//routes
+require ("./routes/auth.routes")(app);
+require ("./routes/user.routes")(app);
 
 var corsOption = {
     origin:"http://localhost:5173"
