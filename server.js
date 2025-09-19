@@ -14,7 +14,7 @@ const cookieSession = require('cookie-session');
 
 app.use(cors(corsOption));
 app.use(express.urlencoded({extended:true}));
-
+app.use(express.json());
 app.use(
     cookieSession({
         name:"movies-session",
