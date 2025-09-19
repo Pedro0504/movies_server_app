@@ -11,22 +11,6 @@ const app = express();
 const PORT = process.env.PORT ?? 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
 const cookieSession = require('cookie-session');
-//routes
-require ("./routes/auth.routes")(app);
-require ("./routes/user.routes")(app);
-
-var corsOption = {
-    origin:"http://localhost:5173"
-}
-
-const upload = multer({dest:'uploads/'});
-
-const userSchema = mongoose.Schema({
-    username:String,
-    imgUrl: String,
-    createdAt: {type:Date, default:Date.now}
-})
-mongoose.exports = mongoose.model('UserImage', userSchema)
 
 app.use(cors(corsOption));
 app.use(express.urlencoded({extended:true}));
@@ -39,7 +23,25 @@ app.use(
     })
 );
 
+//routes
+require ("./routes/auth.routes")(app);
+require ("./routes/user.routes")(app);
 
+var corsOption = {
+    origin:"http://localhost:5173",
+    methods:['GET', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}
+
+const upload = multer({dest:'uploads/'});
+
+const userSchema = mongoose.Schema({
+    username:String,
+    imgUrl: String,
+    createdAt: {type:Date, default:Date.now}
+})
+mongoose.exports = mongoose.model('UserImage', userSchema)
 
 app.listen(PORT, (req,res)=>{
     console.log(`This app is listening in port: ${PORT}`);
