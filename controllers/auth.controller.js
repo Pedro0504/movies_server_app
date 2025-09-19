@@ -3,7 +3,7 @@ const db = require("../models");
 const User = db.user;
 const Role = db.role;
 
-var hwt = require("jsonwebtoken");
+var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
 exports.signup = (req, res)=>{
@@ -32,7 +32,7 @@ exports.signup = (req, res)=>{
                         res.status(500).send({message:err});
                         return;
                     }
-                    res.send({message:"User was registered succesfully!"});
+                    res.json({message:"User was registered succesfully!"});
                 });
             }
         );
@@ -46,7 +46,7 @@ exports.signup = (req, res)=>{
                 user.roles = [role._id];
                 user.save((err)=>{
                     if(err){
-                        res.status(500).send({mesage:err});
+                        res.status(500).send({message:err});
                         return;
                     }
 
@@ -69,7 +69,7 @@ exports.signin = (req, res)=>{
         }
 
         if(!user){
-            return res.status(404).send({message: "User not found!"});
+            return res.status(404).json({message: "User not found!"});
         }
         var passwordIsValid = bcrypt.compareSync(
             req.body.password,
@@ -77,10 +77,10 @@ exports.signin = (req, res)=>{
         );
 
         if(!passwordIsValid){
-            return res.status(401).send({message:"Invalid Password"});
+            return res.status(401).json({message:"Invalid Password"});
         }
 
-        const token = jwt.sign({id:user.id},
+        const token = jwt.sign({id:user._id},
             config.secret,
             {
                 algorithm:'HS256',
@@ -97,7 +97,7 @@ exports.signin = (req, res)=>{
             req.session.token = token;
 
             res.status(200).send({
-                id:user_id,
+                id:user._id,
                 username: user.username,
                 email:user.email,
                 roles: authorities,
@@ -108,7 +108,7 @@ exports.signin = (req, res)=>{
 exports.signout = async(req, res)=>{
     try{
         req.session = null;
-        return res.status(200).send({message:"You've been signed out!"});
+        return res.status(200).json({message:"You've been signed out!"});
     } catch(err){
         this.next(err);
     }
